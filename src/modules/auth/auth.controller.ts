@@ -30,10 +30,20 @@ const loginUser = async (req: Request, res: Response) => {
     try {
         const { email, password } = req.body;
         const result = await authServices.loginUser(email, password);
+
+        // if user not found or provide wrong password
+        if (result === false || result === null) {
+            return res.status(404).json({
+                sucess: false,
+                message: `${result === false ? "Please provide correct password" : "User not found"}`
+            })
+        }
+
+        // after getting user successfully 
         res.status(201).json({
             success: true,
             message: "Login successful",
-            data:result
+            data: result
         })
     } catch (error: any) {
         res.status(500).json({

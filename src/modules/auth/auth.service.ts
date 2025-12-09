@@ -32,6 +32,7 @@ const loginUser = async (email: string, password:string) => {
     // check password
     const userInfo = result.rows[0];
     const matchedPass = await bcrypt.compare(password, userInfo.password);
+    console.log(matchedPass)
     
     // userinfo
     const {password:userPass, created_at, updated_at, ...user} = userInfo;
