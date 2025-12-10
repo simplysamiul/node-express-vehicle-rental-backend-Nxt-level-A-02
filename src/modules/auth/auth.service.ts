@@ -32,7 +32,6 @@ const loginUser = async (email: string, password:string) => {
     // check password
     const userInfo = result.rows[0];
     const matchedPass = await bcrypt.compare(password, userInfo.password);
-    console.log(matchedPass)
     
     // userinfo
     const {password:userPass, created_at, updated_at, ...user} = userInfo;
@@ -44,7 +43,7 @@ const loginUser = async (email: string, password:string) => {
 
     // if email and password mactched then generate jwt token
     const secret = config.jwt_secret;
-    const token = jwt.sign({name:userInfo.name, email:userInfo.email, role:userInfo.role}, secret as string, {expiresIn: "3d"});
+    const token = jwt.sign({id:userInfo.id, name:userInfo.name, email:userInfo.email, role:userInfo.role}, secret as string, {expiresIn: "3d"});
     
 
     return {token, user};

@@ -8,5 +8,12 @@ const router = express.Router();
 // get all users
 router.get("/",auth("admin"), userControllers.getAllUsers);
 
+// update a user by id
+router.put("/:userId",auth("admin", "customer"), userControllers.updateAUser);
 
-export const userRoutes = router;
+
+// delete a user by id
+router.delete("/:userId", auth("admin"), userControllers.deleteAUser);
+
+
+export const userRoutes = router; 
