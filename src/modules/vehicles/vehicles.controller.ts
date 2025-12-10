@@ -59,9 +59,26 @@ const updateSingleVehicle = async (req: Request, res: Response) => {
         const { vehicleId } = req.params;
         const result = await vehicleServices.updateSingleVehicle(req.body, vehicleId as string);
         res.status(200).json({
-            succes:true,
+            succes: true,
             message: "Vehicle updated successfully",
             data: result.rows[0]
+        })
+    } catch (error: any) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        })
+    }
+};
+
+// delete vehicle by id
+const deleteSingleVehicle = async (req: Request, res: Response) => {
+    try {
+        const {vehicleId} = req.params;
+        const result = await vehicleServices.deleteSingleVehicle(vehicleId as string);
+        res.status(200).json({
+            success:true,
+            message: "Vehicle deleted successfully"
         })
     } catch (error:any) {
         res.status(500).json({
@@ -77,5 +94,6 @@ export const vehicleControllers = {
     createVehile,
     getAllVehicles,
     getSingleVehicle,
-    updateSingleVehicle
+    updateSingleVehicle,
+    deleteSingleVehicle
 }
