@@ -3,6 +3,7 @@ import { initDb } from "./config/db";
 import { authRoutes } from "./modules/auth/auth.route";
 import { userRoutes } from "./modules/users/users.routes";
 import { vehilceRoutes } from "./modules/vehicles/vehicles.routes";
+import { bookingRoutes } from "./modules/bookings/booking.routes";
 
 const app = express();
 
@@ -21,12 +22,14 @@ app.get('/', (req:Request, res:Response) => {
 // ******************** AUTH Routes ******************** //
 app.use("/api/v1/auth", authRoutes);
 
-// ******************** USERS Routes ******************** //
+// ******************** USERS Routes ******************* //
 app.use("/api/v1/users", userRoutes)
 
-// ******************** VEHICLES Routes ******************** //
+// ******************** VEHICLES Routes **************** //
 app.use("/api/v1/vehicles", vehilceRoutes)
 
-// ******************** BOOKING Routes ******************** //
+// ******************** BOOKING Routes ***************** //
+app.use("/api/v1/bookings", bookingRoutes)
+
 
 export default app;

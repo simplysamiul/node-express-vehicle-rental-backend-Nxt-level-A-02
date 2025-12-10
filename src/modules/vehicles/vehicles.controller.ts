@@ -86,7 +86,7 @@ const deleteSingleVehicle = async (req: Request, res: Response) => {
             message: error.message
         })
     }
-}
+};
 
 
 
