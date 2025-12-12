@@ -1,4 +1,4 @@
-    # Vehicle Rental Management System
+## Vehicle Rental Management System
 
 A backend service for managing vehicle rentals with secure authentication, role-based access control, booking management, and automatic vehicle availability updates.  
 This system is built using **Node.js, Express.js, TypeScript, PostgreSQL, and NeonDB**, following a clean modular architecture.
