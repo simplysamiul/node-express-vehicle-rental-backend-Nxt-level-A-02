@@ -57,12 +57,6 @@ const initDb = async () => {
             FROM vehicles v
             WHERE v.id = NEW.vehicle_id;
 
-            -- Calculate total days
-            total_days := (NEW.rent_end_date - NEW.rent_start_date);
-
-            -- Calculate total price
-            NEW.total_price := total_days * daily_price;
-
             RETURN NEW;
             END;
             $$ LANGUAGE plpgsql;
