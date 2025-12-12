@@ -1,3 +1,5 @@
+import { Request } from 'express';
+import { JwtPayload } from "jsonwebtoken";
 import { pool } from "../../config/db";
 import { BookingBody } from "../../types/types";
 
@@ -57,6 +59,99 @@ const createABooking = async (payload: BookingBody) => {
 };
 
 
+// get all bookings
+const getAllBookings = async (role: JwtPayload) => {
+
+    if (role.role === "admin") {
+        const result = await pool.query(`
+                 SELECT
+                    b.id,
+                    b.customer_id,
+                    b.vehicle_id,
+                    b.rent_start_date,
+                    b.rent_end_date,
+                    b.total_price,
+                    b.status,
+                    json_build_object('name', u.name, 'email', u.email) AS customer,
+                    json_build_object('vehicle_name', v.vehicle_name, 'registration_number', v.registration_number) AS vehicle
+                FROM bookings b
+                JOIN vehicles v ON b.vehicle_id = v.id
+                JOIN users u ON b.customer_id = u.id
+                ORDER BY b.created_at DESC
+            `);
+
+        return result.rows;
+    } else if (role.role === "customer") {
+        const result = await pool.query(`
+            SELECT
+                b.id,
+                b.vehicle_id,
+                b.rent_start_date,
+                b.rent_end_date,
+                b.total_price,
+                b.status,
+                json_build_object(
+                'vehicle_name', v.vehicle_name,
+                'registration_number', v.registration_number,
+                'type', v.type
+                ) AS vehicle
+            FROM bookings b
+            JOIN vehicles v ON b.vehicle_id = v.id
+            WHERE b.customer_id = $1
+            ORDER BY b.created_at DESC
+            `);
+
+        return result.rows[0];
+    }
+}
+
+// update bookig by id
+const updateBooking = async (id: string, status: string) => {
+    const bookingResult = await pool.query(
+        `UPDATE bookings 
+         SET status = $1, updated_at = NOW() 
+         WHERE id = $2 
+         RETURNING *`,
+        [status, id]
+    );
+
+    if (bookingResult.rowCount === 0) {
+        throw new Error("Booking not found");
+    }
+
+    const booking = bookingResult.rows[0];
+
+    // update vehicle availability status
+    await pool.query(
+        `UPDATE vehicles 
+         SET availability_status = 'available', updated_at = NOW()
+         WHERE id = $1`,
+        [booking.vehicle_id]
+    );
+
+    const result = await pool.query(`
+        SELECT 
+            b.id,
+            b.customer_id,
+            b.vehicle_id,
+            b.rent_start_date,
+            b.rent_end_date,
+            b.total_price,
+            b.status,
+            json_build_object(
+                'availability_status', v.availability_status
+            ) AS vehicle
+        FROM bookings b
+        JOIN vehicles v ON b.vehicle_id = v.id
+        WHERE b.id = $1
+    `, [id]);
+
+    return result;
+}
+
+
 export const bookingServices = {
-    createABooking
+    createABooking,
+    getAllBookings,
+    updateBooking
 }
